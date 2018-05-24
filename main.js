@@ -1,3 +1,4 @@
+
 var gravityScore,
 	 href = window.location.href;
 	//<br><br><button class="UIButton" id="customWaitButton" type="button"><span class="UIButton-wrapper"><span>Inject</span></span></button>
@@ -82,7 +83,7 @@ var gravityScore,
 		}
 		
 		function gravity() {
-			if (gravityScore == undefined) {
+			if (gravityScore === undefined) {
 				gravityScore = parseInt(prompt("Enter exact score:"));
 			}
 							
@@ -95,7 +96,7 @@ var gravityScore,
 
 			function s(e) {
 				t.grader.grade = function(e, t, n) {
-					return !0
+					return !0;
 				}, e(), t.grader.grade = n
 			}
 			s(function() {
@@ -108,10 +109,10 @@ var gravityScore,
 						t._checkCopiedAnswer({
 							liveTermId: e,
 							answer: ""
-						})
-					})
-				}, 0)
-			}
+						});
+					});
+				}, 0);
+			};
 		}
 
 		function write() {
@@ -141,7 +142,7 @@ var gravityScore,
 			if (getClass("SpellModeControls-progressValue")[0].innerHTML == "100%") {
 				return 1;
 			}
-			if (getId("js-spellInput") != null) {
+			if (getId("js-spellInput") !== null) {
 				getId("js-spellInput").value = findAnswerGlobal(getClass("qDef lang-en TermText")[0].innerHTML);
 				setTimeout(spell, 10);
 			}
@@ -151,7 +152,7 @@ var gravityScore,
 		function match() {
 			button = getClass("UIButton UIButton--hero")[0], button && button.click();
 			var matchLoop = setInterval(function() {
-				waitForMatch()
+				waitForMatch();
 			}, 0);
 			
 			function waitForMatch() {
@@ -167,7 +168,7 @@ var gravityScore,
 							}
 						}
 					}
-					clearTimeout(matchLoop)
+					clearTimeout(matchLoop);
 				}
 			}
 		}
@@ -198,7 +199,7 @@ var gravityScore,
 				if (e.fireEvent) e.fireEvent("on" + t);
 				else {
 					var n = document.createEvent("Events");
-					n.initEvent(t, !0, !1), e.dispatchEvent(n)
+					n.initEvent(t, !0, !1), e.dispatchEvent(n);
 				}
 			}
 		}
@@ -208,7 +209,7 @@ var gravityScore,
 				return 1;
 			}
 			checkCheckbox();
-			if (getClass("AssistantMultipleChoiceQuestionPromptView-inner")[0] != undefined) {
+			if (getClass("AssistantMultipleChoiceQuestionPromptView-inner")[0] !== undefined) {
 				var answer = findAnswerGlobal(getClass("FormattedText notranslate TermText lang-en")[0].innerHTML);
 				var q1 = getClass("FormattedText notranslate TermText lang-en")[1];
 				var q2 = getClass("FormattedText notranslate TermText lang-en")[2];
@@ -223,7 +224,7 @@ var gravityScore,
 				} else if (answer == q4.innerHTML) {
 					q4.click();
 				} else {
-					console.error("ERROR: Unable to find / click answer")
+					console.error("ERROR: Unable to find / click answer");
 					return 0;
 				}
 				getClass("UIButton")[4].click();
@@ -235,34 +236,34 @@ var gravityScore,
 
 		function checkCheckbox() {
 			document.getElementsByClassName("UIButton UIButton--whiteBorder UIButton--fill")[0].click();
-			if (document.getElementsByClassName("UICheckbox-input")[3].checked && document.getElementsByClassName("UICheckbox-input")[2].checked != true && document.getElementsByClassName("UICheckbox-input")[4].checked != true) { 
+			if (document.getElementsByClassName("UICheckbox-input")[3].checked && document.getElementsByClassName("UICheckbox-input")[2].checked !== true && document.getElementsByClassName("UICheckbox-input")[4].checked !== true) { 
 				document.getElementsByClassName("UIButton UIButton--inverted")[0].click();
 				return 1;
 			}  
-			if (document.getElementsByClassName("UICheckbox-input")[4].checked == true) {
+			if (document.getElementsByClassName("UICheckbox-input")[4].checked === true) {
 				document.getElementsByClassName("UICheckbox-input")[4].click();	
 			} 
-			if (document.getElementsByClassName("UICheckbox-input")[2].checked == true) {
+			if (document.getElementsByClassName("UICheckbox-input")[2].checked === true) {
 				document.getElementsByClassName("UICheckbox-input")[2].click();
 			} 
-			if (document.getElementsByClassName("UICheckbox-input")[3].checked == false) {
+			if (document.getElementsByClassName("UICheckbox-input")[3].checked === false) {
 				document.getElementsByClassName("UICheckbox-input")[3].click();	
 			}
 			document.getElementsByClassName("UIButton UIButton--inverted")[0].click();
 		}
 		
 		function findAnswerGlobal(question) {
-			if (Quizlet.assistantModeData != undefined) { //Quizlet.assistantModeData.terms
+			if (Quizlet.assistantModeData !== undefined) { //Quizlet.assistantModeData.terms
 				return getAnswer(Quizlet.assistantModeData.terms, question);
-			} else if (Quizlet.learnGameData != undefined) { //Quizlet.learnGameData.allTerms
+			} else if (Quizlet.learnGameData !== undefined) { //Quizlet.learnGameData.allTerms
 				return getAnswer(Quizlet.learnGameData.allTerms, question);
-			} else if (Quizlet.testModeData != undefined) { //Quizlet.testModeData.terms
+			} else if (Quizlet.testModeData !== undefined) { //Quizlet.testModeData.terms
 				return getAnswer(Quizlet.testModeData.terms, question);
-			} else if (Quizlet.spellModeData != undefined) { //Quizlet.spellModeData.spellGameData.termsById
+			} else if (Quizlet.spellModeData !== undefined) { //Quizlet.spellModeData.spellGameData.termsById
 				return getAnswer(Quizlet.spellModeData.spellGameData.termsById, question);
-			} else if (Quizlet.matchModeData != undefined) { //Quizlet.matchModeData.terms
+			} else if (Quizlet.matchModeData !== undefined) { //Quizlet.matchModeData.terms
 				return getAnswer(Quizlet.matchModeData.terms, question);
-			} else if (Quizlet.gravityModeData != undefined) { //Quizlet.gravityModeData.terms
+			} else if (Quizlet.gravityModeData !== undefined) { //Quizlet.gravityModeData.terms
 				return getAnswer(Quizlet.gravityModeData.terms, question);
 			} else {
 				return 0;
@@ -293,7 +294,7 @@ var gravityScore,
 	
 	function cAlert(message) {
 		var html = '<div class="UIModal is-white is-open" id="customMessageContainer" role="document" tabindex="-1"> <div class="UIModal-box"> <div class="UIModalHeader"> <div class="UIModalHeader-wrapper"> <span class="UIModalHeader-close"> <div class="UIModalHeader-closeIconButton"> <span class="UIIconButton"> <button class="UIButton UIButton--inverted" type="button" id="customCloseButton" onclick="document.getElementById(&quot;customMessageContainer&quot;).remove();"> <span class="UIButton-wrapper"> <svg class="UIIcon UIIcon--x-thin"> <noscript></noscript> <use xlink:href="#x-thin"></use> <noscript></noscript> </svg> </span> </button> </span> </div> </span> <div class="UIModalHeader-childrenWrapper"> <h3 class="UIHeading UIHeading--three"><span id="customTitle">SnowLords Quizlet Extension</span></h3> </div> </div> </div> <div class="UIModalBody"> <div class="UIDiv SetPageEmbedModal-content"> <div> <p class="UIParagraph"><span id="customMessage">'+message+'</span></p></div></div></div></div></div>';
-		var j = document.createElement('div')
+		var j = document.createElement('div');
 		j.innerHTML = html;
 		document.body.appendChild(j);
 	}

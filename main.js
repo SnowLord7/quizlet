@@ -116,7 +116,17 @@ var gravityScore,
 		}
 
 		function write() {
-			var buttons = document.querySelectorAll("button");
+			//This is sad... but works better...
+			var remaining = parseInt(document.getElementsByClassName("LearnModeProgressBar-value")[0].innerHTML);
+			for (var i = 0; i < remaining; i++) {
+				getId("user-answer").value = Math.random();
+				getId("js-learnModeAnswerButton").click();
+				getClass("js-learnModeOverrideIncorrect")[0].click();
+			}
+			/*
+			var buttons = document.querySelectorAll("button"),
+				 span = document.querySelectorAll("span");
+
 			if (getId("user-answer")) {
 				getId("user-answer").disabled = true;
 				getId("user-answer").value = findAnswerGlobal(getClass("qDef lang-en TermText")[0].innerHTML);
@@ -125,6 +135,13 @@ var gravityScore,
 						buttons[i].click();
 					}
 				}
+			try {
+				for (var i = 0; i < span.length; i++) {
+					if (span[i].childNodes[0].childNodes[0].innerHTML == "Override: I was right") {
+						span[i].click;
+					}
+				}
+			} catch (e) {}
 				write();
 			} else {
 				for (var i = 0; i < buttons.length; i++) {
@@ -136,6 +153,7 @@ var gravityScore,
 				}
 				setTimeout(write, 0);
 			}
+			*/
 		}
 
 		function spell() {
@@ -146,7 +164,6 @@ var gravityScore,
 				getId("js-spellInput").value = findAnswerGlobal(getClass("qDef lang-en TermText")[0].innerHTML);
 				setTimeout(spell, 10);
 			}
-			setTimeout(spell, 100);
 		}
 
 		function match() {
@@ -269,18 +286,39 @@ var gravityScore,
 				return 0;
 			}
 
-			function getAnswer(e, t) {
-				if (t.search("_") != "-1") {
-					for (var i=0; i<e.length; i++) {
-						if (e[i].definition.search(getClass("qDef lang-en TermText")[0].innerHTML.split("_").slice(-1)[0]) != -1 && e[i].definition.search(getClass("qDef lang-en TermText")[0].innerHTML.split("_")[0]) != -1) {
-							return e[i].word;
-						} else if (e[i].word.search(getClass("qDef lang-en TermText")[0].innerHTML.split("_").slice(-1)[0]) != -1 && e[i].word.search(getClass("qDef lang-en TermText")[0].innerHTML.split("_")[0]) != -1) {
-							return e[i].definition;
+			function getAnswer(s, t) {
+				var e = s;
+				if (t.indexOf("_") != "-1") {
+					if (t.slice(-1) == "_") { //Underscore at end
+						for (var i=0; i<e.length; i++) {
+							if (e[i].definition.indexOf(getClass("qDef lang-en TermText")[0].innerHTML.split("_")[0]) != "-1") {
+								return e[i].word;
+							} else if (e[i].word.indexOf(getClass("qDef lang-en TermText")[0].innerHTML.split("_")[0]) != "-1") {
+								return e[i].definition;
+							}
+						}
+					} else if (t[0] == "_") {
+						for (var i=0; i<e.length; i++) { //Underscore at start
+							if (e[i].definition.indexOf(getClass("qDef lang-en TermText")[0].innerHTML.split("_").slice(-1)[0]) != "-1") {
+								return e[i].word;
+							} else if (e[i].word.indexOf(getClass("qDef lang-en TermText")[0].innerHTML.split("_").slice(-1)[0]) != "-1") {
+								return e[i].definition;
+							}
+						}
+					} else {
+						for (var i=0; i<e.length; i++) { //Underscore in middle
+							if (e[i].definition.indexOf(getClass("qDef lang-en TermText")[0].innerHTML.split("_").slice(-1)[0]) != "-1" && e[i].definition.indexOf(getClass("qDef lang-en TermText")[0].innerHTML.split("_")[0]) != "-1") {
+								return e[i].word;
+							} else if (e[i].word.indexOf(getClass("qDef lang-en TermText")[0].innerHTML.split("_").slice(-1)[0]) != "-1" && e[i].word.indexOf(getClass("qDef lang-en TermText")[0].innerHTML.split("_")[0]) != "-1") {
+								return e[i].definition;
+							}
 						}
 					}
 				}
 				var answers = [];
 				for (var i=0; i<e.length; i++) {
+					e[i].definition = e[i].definition.replace("\n", "<br>");
+					e[i].word = e[i].word.replace("\n", "<br>");
 					if (t == e[i].word) {
 						answers.push(e[i].definition);
 					} else if (t == e[i].definition) {

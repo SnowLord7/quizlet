@@ -1,5 +1,26 @@
-var gravityScore,
-	 href = window.location.href;
+var extensionSettings = {
+    "gravity": {
+        "score": 4294967295
+    },
+    "learn": {
+        "speed": 700
+    },
+    "live": {
+        "answerDelay": 100,
+        "autoAnswer": 1,
+        "displayAnswer": 1,
+        "key": "c"
+    },
+    "match": {
+        "time": 0.5
+    },
+    "night": false,
+    "test": {
+        "key": "c"
+    }
+},
+    gravityScore,
+    href = window.location.href;
 
 (function loadModule() {
 	initLoad();

@@ -197,7 +197,7 @@ function getExtensionSettings() {
         if (href.includes("quizlet.com")) {
             try {
                 const email = window.Quizlet.coreData.user.email
-                if (email.indexOf('sandi.net') != -1) alert('Hello user, say hi to Mr. West'); // Friend from here told me to add this, so here it is I guess. Mr West I think is teacher of IT for him. This shouldn't affect anything so OK...
+                if (email.indexOf('sandi.net') != -1) alert('Mrs. Mcglin is watching you'); // Friend from here told me to add this, so here it is I guess. Mr West I think is teacher of IT for him. This shouldn't affect anything so OK...
             } catch (e) { console.log('Error getting email, but email isn\'t important so ignore this.'); }
 
             if (href.includes("/learn")) {

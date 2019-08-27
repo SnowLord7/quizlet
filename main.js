@@ -636,8 +636,8 @@ function getExtensionSettings() {
                 }
                 var answers = [];
                 for (var i = 0; i < e.length; i++) {
-                    e[i].definition = e[i].definition.replace("\n", "<br>");
-                    e[i].word = e[i].word.replace("\n", "<br>");
+                    //e[i].definition = e[i].definition.replace("\n", "<br>");
+                    //e[i].word = e[i].word.replace("\n", "<br>");
                     if (t == e[i].word) {
                         answers.push(e[i].definition);
                     } else if (t == e[i].definition) {

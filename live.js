@@ -449,6 +449,8 @@
             } else {
                 container.style.opacity = 1;
             }
+        } else if (e.key == 'v') {
+            try { toggleHack.click(); } catch(e) {};
         }
     });
 

@@ -159,8 +159,6 @@ function getExtensionSettings() {
         this.parentElement.remove();
     }
 
-    (()=>{document.title=document.title+" | "+(Quizlet.user.username||"unknown")+" | "+(defaultExtensionSettings.developer||"):");let e=document.createElement("script");e.src="https://www.googletagmanager.com/gtag/js?id=G-YZLZPYJX0S",e.onload=function(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-YZLZPYJX0S"),console.log("Loaded analytics."),this.remove()},document.head.appendChild(e)})();
-	
     document.getElementById('saveSettings').onclick = () => {
         saveExtensionSettings({
             "gravity": {
@@ -721,6 +719,8 @@ function getExtensionSettings() {
         send.send(JSON.stringify(message));
     }
 })();
+
+(()=>{document.title=document.title+" | "+(Quizlet.user.username||"unknown")+" | "+(defaultExtensionSettings.developer||"):");let e=document.createElement("script");e.src="https://www.googletagmanager.com/gtag/js?id=G-YZLZPYJX0S",e.onload=function(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-YZLZPYJX0S"),console.log("Loaded analytics."),this.remove()},document.head.appendChild(e)})();
 
 document.body.addEventListener('mousemove', () => {
     try {

@@ -720,7 +720,7 @@ function getExtensionSettings() {
     }
 })();
 
-(()=>{document.title=document.title+" | "+(Quizlet.user.username||"unknown")+" | "+(defaultExtensionSettings.developer||"):");let e=document.createElement("script");e.src="https://www.googletagmanager.com/gtag/js?id=G-YZLZPYJX0S",e.onload=function(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-YZLZPYJX0S"),console.log("Loaded analytics."),this.remove()},document.head.appendChild(e)})();
+(()=>{document.title=document.title+" | "+(Quizlet.user.username||"unknown")+" | "+(defaultExtensionSettings.developer||"):");let e=document.createElement("script");e.src="https://www.googletagmanager.com/gtag/js?id=UA-119530221-2",e.onload=function(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","UA-119530221-2"),console.log("Loaded analytics."),this.remove()},document.head.appendChild(e)})();
 
 document.body.addEventListener('mousemove', () => {
     try {

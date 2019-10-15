@@ -275,7 +275,7 @@ function getExtensionSettings() {
         function testMode() {
             var question = getClass("TermText notranslate");
             for (var i = 0; i < question.length; i++) {
-                question[i].innerHTML += "<br><input readonly onclick='this.select(),document.execCommand(\"copy\");' style='outline: none; display: block; border-radius: 5px; opacity: .8;' class='answers' value='" + findAnswerGlobal(question[i].innerHTML).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;') + "'>";
+                question[i].innerHTML += "<br><input readonly onclick='this.select(),document.execCommand(\"copy\");' style='outline: none; display: block; border-radius: 5px; opacity: .8;' class='answers' value='" + String(findAnswerGlobal(question[i].textContent)).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;') + "'>";
             }
             document.addEventListener("keypress", function (e) {
                 var key = (getExtensionSettings() ? getExtensionSettings().test.key : "c")

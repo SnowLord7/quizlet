@@ -828,6 +828,11 @@ Learn.prototype.start = function () {
 Learn.prototype.loop = function () {
 	if (this.mode() == 'choice') this.solve();
 	else if (this.mode() == 'written' || this.mode() == 'flashcards') {
+		let btns = document.getElementsByClassName('UIButton');
+
+		for (let i = 0; i < btns.length; ++i)
+			if (btns[i].innerText.trim() == 'Options') btns[i].click();
+		
 		alert('Please make sure \'Question Type\' is set to choice only.');
 		this.running = false;
 	} 

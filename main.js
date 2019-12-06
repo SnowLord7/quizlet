@@ -537,46 +537,7 @@ function getExtensionSettings() {
         }
 
         function learn() {
-            var loop = setInterval(function () {
-                if (getClass("UILabelledItem-item")[0].innerHTML == "0") {
-                    msg("Quizlet - Learn Mode", "You have finished the set! Stopping the answer script!<br><br>");
-                    clearInterval(loop);
-                } else {
-                    checkCheckbox();
-                    if (getClass("AssistantMultipleChoiceQuestionPromptView-inner")[0] !== undefined) {
-                        var questions = document.getElementsByClassName("AssistantMultipleChoiceQuestionPromptView-termOptionInner");
-                        Quizlet.assistantModeData.terms.forEach(function (term) {
-                            var question = document.getElementsByClassName("FormattedText notranslate TermText")[0].innerText.trim();
-                            if (question == term.word || question == term.definition) {
-                                for (let i = 0; i < questions.length; i++) {
-                                    if (questions[i].innerText.trim() == term.word || questions[i].innerText.trim() == term.definition) {
-                                        questions[i].click();
-                                    }
-                                }
-                            }
-                        });
-                        setTimeout(function () {
-                            var buttons = getClass("UIButton");
-                            var button = Array.prototype.slice.call(buttons, 0).filter(function (e) {
-                                return e.innerText.trim() == ("Press any key to continue");
-                            });
-                            if (button[0] !== undefined) {
-                                button[0].click();
-                            }
-                        }, 400);
-                    } else {
-                        setTimeout(function () {
-                            var buttons = getClass("UIButton");
-                            var button = Array.prototype.slice.call(buttons, 0).filter(function (e) {
-                                return e.innerText.trim() == ("Press any key to continue");
-                            });
-                            if (button[0] !== undefined) {
-                                button[0].click();
-                            }
-                        }, 400);
-                    }
-                }
-            }, (getExtensionSettings() ? getExtensionSettings().learn.speed : 700));
+            new Learn().running = 'true';
         }
 
         function checkCheckbox() {
@@ -759,4 +720,181 @@ function getId(id) {
 
 function getClass(id) {
     return document.getElementsByClassName(id);
+}
+
+let Answers = {
+	'duplicates': function (terms=this.get()) {
+		let words = terms.map(e => e.word),
+			images = terms.map(e => e.photo || e._imageUrl),
+			definitions = terms.map(e => e.definition);
+
+		if (new Set(words).size != words.length) return true;
+		if (new Set(definitions).size != definitions.length) return true;
+		if (words.filter(e => definitions.indexOf(e) != -1).length) return true;
+
+		return false;
+	},
+
+	'get': function () {
+		if (Quizlet.assistantModeData !== undefined) {
+            return Quizlet.assistantModeData.terms;
+        } else if (Quizlet.learnGameData !== undefined) {
+            return Quizlet.learnGameData.allTerms;
+        } else if (Quizlet.testModeData !== undefined) {
+            return Quizlet.testModeData.terms;
+        } else if (Quizlet.spellModeData !== undefined) {
+            return Quizlet.spellModeData.spellGameData.termsById;
+        } else if (Quizlet.matchModeData !== undefined) {
+            return Quizlet.matchModeData.terms;
+        } else if (Quizlet.gravityModeData !== undefined) {
+            return Quizlet.gravityModeData.terms;
+        }
+        return [];
+	},
+
+	'find': function(question='', terms=this.get()) {
+        let words = terms.filter(e => e.word == question),
+			definitions = terms.filter(e => e.definition == question),
+			images = terms.filter(e => e.photo == question || e._imageUrl == question);
+
+        answers = [...words, ...definitions, ...images];
+        return answers;
+    },
+
+	'exact': function(question, src='', terms=this.get()) {
+		let matches = [];
+
+		// Test for normal matching text and image
+		for (let i = 0; i < terms.length; ++i) {
+			let word = terms[i].word,
+				definition = terms[i].definition,
+				image = terms[i].photo || terms[i]._imageUrl;
+
+			if (question == word && src == image) matches.push(definition);
+		}
+
+		// Test for defintion with text and image
+		if (matches.length == 0) {
+			for (let i = 0; i < terms.length; ++i) {
+				let word = terms[i].word,
+					definition = terms[i].definition,
+					image = terms[i].photo || terms[i]._imageUrl;
+
+				if (question == definition && src == image) matches.push(word);
+			}
+		}
+
+		// Test for only matching word
+		if (matches.length == 0) {
+			for (let i = 0; i < terms.length; ++i) {
+				let word = terms[i].word,
+					definition = terms[i].definition;
+
+				if (question == word) matches.push(definition);
+			}
+		}
+
+		// Test for only matching definition
+		if (matches.length == 0) {
+			for (let i = 0; i < terms.length; ++i) {
+				let word = terms[i].word,
+					definition = terms[i].definition;
+
+				if (question == definition) matches.push(word);
+			}
+		}
+
+		return matches;
+	}
+}
+
+function Learn() {
+	this.interval = 100;
+	this.running = false;
+
+	this.interval = setInterval(() => {
+		if (this.running) this.loop();
+	}, this.interval);	
+}
+
+Learn.prototype.pause = function () {
+	this.running = false;
+}
+
+Learn.prototype.start = function () {
+	this.running = true;
+}
+
+Learn.prototype.loop = function () {
+	if (this.mode() == 'choice') this.solve();
+	else if (this.mode() == 'written' || this.mode() == 'flashcards') {
+		alert('Please make sure \'Question Type\' is set to choice only.');
+		this.running = false;
+	} 
+	else if (this.mode() == 'other') this.next();
+}
+
+Learn.prototype.solve = function () {
+	let elements = this.questions(),
+		answers = this.answers();
+
+	loop:
+	for (let i = 0; i < elements.length; ++i) {
+		for (let j = 0; j < answers.length; ++j) {
+			if (elements[i].innerText.substr(2) == answers[j]) {
+				elements[i].click();
+				break loop;
+			}
+		}
+	}
+}
+
+Learn.prototype.answers = function () {
+	if (this.questions().length == 0) return [];
+
+	return Answers.exact(this.text().innerText, this.image().src);
+}
+
+Learn.prototype.next = () => {
+	let btns = document.getElementsByClassName('UIButton');
+
+	for (let i = 0; i < btns.length; ++i) {
+		if (btns[i].innerText.trim() == 'Press any key to continue') btns[i].click();
+	}
+}
+
+Learn.prototype.questions = () => {
+	return document.getElementsByClassName('AssistantMultipleChoiceQuestionPromptView-termOption');
+}
+
+Learn.prototype.parent = () => {
+	return document.getElementsByClassName('AssistantMultipleChoiceQuestionPromptView-promptArea')[0];
+}
+
+Learn.prototype.image = function () {
+	if (this.questions().length == 0) return false;
+
+	let container = this.parent().getElementsByClassName('FormattedTextWithImage-image')[0];
+	if (!container) return document.createElement('img');
+
+	return container.getElementsByClassName('Image-image')[0];
+}
+
+Learn.prototype.text = function () {
+	if (this.questions().length == 0) return false;
+
+	let container = this.parent().getElementsByClassName('AssistantPromptTermTextWithImage')[0],
+		parent = container.getElementsByClassName('FormattedText')[0];
+	
+	if (!parent) return document.createElement('div');
+
+	return parent.children[0];
+}
+
+Learn.prototype.mode = () => {
+	if (document.getElementsByClassName('AssistantMultipleChoiceQuestionPromptView-termOption').length > 0) return 'choice';
+	if (document.getElementsByClassName('AutoExpandTextarea-textarea').length > 0) return 'written';
+	if (document.getElementsByClassName('FlippableFlashcard').length > 0) return 'flashcards';
+
+	return 'other';
 }

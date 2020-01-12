@@ -405,7 +405,7 @@
 
 			Array.prototype.contains = function (value) {
 				for (let i = 0; i < this.length; i++)
-					if (exact && this[i] === value) return true;
+					if (this[i] === value) return true;
 				return false;
 			};
 

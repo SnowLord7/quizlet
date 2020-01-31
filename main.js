@@ -888,7 +888,7 @@ Learn.prototype.image = function () {
 Learn.prototype.text = function () {
 	if (this.questions().length == 0) return false;
 
-	let container = this.parent().getElementsByClassName('AssistantPromptTermTextWithImage')[0],
+	let container = this.parent().getElementsByClassName('LearnPromptTextWithImage')[0],
 		parent = container.getElementsByClassName('FormattedText')[0];
 	
 	if (!parent) return document.createElement('div');

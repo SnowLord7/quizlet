@@ -809,7 +809,7 @@ let Answers = {
 }
 
 function Learn() {
-	this.interval = settings.current.learn.speed || 100;
+	this.interval = 100;
 	this.running = true;
 
 	this.interval = setInterval(() => {

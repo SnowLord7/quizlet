@@ -1320,7 +1320,7 @@ Learn.prototype.next = () => {
 }
 
 Learn.prototype.questions = () => {
-	return document.getElementsByClassName('AssistantMultipleChoiceQuestionPromptView-termOption');
+	return document.getElementsByClassName('LearnMultipleChoiceQuestionPrompt-termOption');
 }
 
 Learn.prototype.parent = () => {
@@ -1348,7 +1348,7 @@ Learn.prototype.text = function () {
 }
 
 Learn.prototype.mode = () => {
-	if (document.getElementsByClassName('AssistantMultipleChoiceQuestionPromptView-termOption').length > 0) return 'choice';
+	if (document.getElementsByClassName('LearnMultipleChoiceQuestionPrompt-termOption').length > 0) return 'choice';
 	if (document.getElementsByClassName('AutoExpandTextarea-textarea').length > 0) return 'written';
 	if (document.getElementsByClassName('FlippableFlashcard').length > 0) return 'flashcards';
 

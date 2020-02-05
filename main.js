@@ -869,11 +869,11 @@ Learn.prototype.next = () => {
 }
 
 Learn.prototype.questions = () => {
-	return document.getElementsByClassName('AssistantMultipleChoiceQuestionPromptView-termOption');
+	return document.getElementsByClassName('LearnMultipleChoiceQuestionPrompt-termOption');
 }
 
 Learn.prototype.parent = () => {
-	return document.getElementsByClassName('AssistantMultipleChoiceQuestionPromptView-promptArea')[0];
+	return document.getElementsByClassName('LearnMultipleChoiceQuestionPrompt-promptArea')[0];
 }
 
 Learn.prototype.image = function () {

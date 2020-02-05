@@ -809,8 +809,8 @@ let Answers = {
 }
 
 function Learn() {
-	this.interval = 100;
-	this.running = false;
+	this.interval = settings.current.learn.speed || 100;
+	this.running = true;
 
 	this.interval = setInterval(() => {
 		if (this.running) this.loop();
@@ -832,7 +832,7 @@ Learn.prototype.loop = function () {
 
 		for (let i = 0; i < btns.length; ++i)
 			if (btns[i].innerText.trim() == 'Options') btns[i].click();
-		
+
 		alert('Please make sure \'Question Type\' is set to choice only.');
 		this.running = false;
 	} 
@@ -897,7 +897,7 @@ Learn.prototype.text = function () {
 }
 
 Learn.prototype.mode = () => {
-	if (document.getElementsByClassName('AssistantMultipleChoiceQuestionPromptView-termOption').length > 0) return 'choice';
+	if (document.getElementsByClassName('LearnMultipleChoiceQuestionPrompt-termOption').length > 0) return 'choice';
 	if (document.getElementsByClassName('AutoExpandTextarea-textarea').length > 0) return 'written';
 	if (document.getElementsByClassName('FlippableFlashcard').length > 0) return 'flashcards';
 

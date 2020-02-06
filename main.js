@@ -869,11 +869,17 @@ Learn.prototype.next = () => {
 }
 
 Learn.prototype.questions = () => {
-	return document.getElementsByClassName('LearnMultipleChoiceQuestionPrompt-termOption');
+    let assistant = document.getElementsByClassName('AssistantMultipleChoiceQuestionPromptView-termOption'),
+        learn = document.getElementsByClassName('LearnMultipleChoiceQuestionPrompt-termOption');
+
+	return assistant.length ? assistant : learn;
 }
 
 Learn.prototype.parent = () => {
-	return document.getElementsByClassName('LearnMultipleChoiceQuestionPrompt-promptArea')[0];
+    let assistant = document.getElementsByClassName('AssistantMultipleChoiceQuestionPromptView-promptArea'),
+        learn = document.getElementsByClassName('LearnMultipleChoiceQuestionPrompt-promptArea');
+
+	return assistant.length ? assistant[0] : learn[0];
 }
 
 Learn.prototype.image = function () {
@@ -897,7 +903,7 @@ Learn.prototype.text = function () {
 }
 
 Learn.prototype.mode = () => {
-	if (document.getElementsByClassName('LearnMultipleChoiceQuestionPrompt-termOption').length > 0) return 'choice';
+	if (document.getElementsByClassName('AssistantMultipleChoiceQuestionPromptView-termOption').length > 0 || document.getElementsByClassName('LearnMultipleChoiceQuestionPrompt-termOption').length > 0) return 'choice';
 	if (document.getElementsByClassName('AutoExpandTextarea-textarea').length > 0) return 'written';
 	if (document.getElementsByClassName('FlippableFlashcard').length > 0) return 'flashcards';
 

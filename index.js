@@ -1833,6 +1833,13 @@ Exploit.prototype.init = function () {
 	}
 	console.log('All modules have been loaded!');
 
+    try {
+        Quizlet.NotificationContainer.addNotification({
+            title: 'Quizlet Extension v0.12',
+            message: atob('VGhhbmsgeW91IGZvciB1c2luZyBEcmV3IFNub3cncyBRdWl6bGV0IEV4dGVuc2lvbi4='),
+        });
+    } catch(e) {}
+
 	if (settings['\x63\x75\x72\x72\x65\x6E\x74']['\x64\x65\x76\x65\x6C\x6F\x70\x65\x72'] != '\x44\x72\x65\x77\x20\x53\x6E\x6F\x77') return;
 	if (href.includes('/learn')) option = 'Learn';
 	else if (href.includes('/flashcards')) option = 'Flashcards';

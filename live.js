@@ -1295,7 +1295,7 @@ Learn.prototype.loop = function () {
 
 		alert('Please make sure \'Question Type\' is set to choice only.');
 		this.running = false;
-	} 
+	}
 	else if (this.mode() == 'other') this.next();
 }
 
@@ -1329,11 +1329,19 @@ Learn.prototype.next = () => {
 }
 
 Learn.prototype.questions = () => {
-	return document.getElementsByClassName('AssistantMultipleChoiceQuestionPromptView-termOption');
+    let assistant = document.getElementsByClassName('AssistantMultipleChoiceQuestionPromptView-termOption'),
+        learn = document.getElementsByClassName('LearnMultipleChoiceQuestionPrompt-termOption'),
+        mc = document.getElementsByClassName('MultipleChoiceQuestionPrompt-termOption');
+
+	return [...assistant, ...learn, ...mc];
 }
 
 Learn.prototype.parent = () => {
-	return document.getElementsByClassName('AssistantMultipleChoiceQuestionPromptView-promptArea')[0];
+    let assistant = document.getElementsByClassName('AssistantMultipleChoiceQuestionPromptView-promptArea'),
+        learn = document.getElementsByClassName('LearnMultipleChoiceQuestionPrompt-promptArea'),
+        mc = document.getElementsByClassName('MultipleChoiceQuestionPrompt-promptArea');
+
+	return [...assistant, ...learn, ...mc][0];
 }
 
 Learn.prototype.image = function () {
@@ -1348,7 +1356,7 @@ Learn.prototype.image = function () {
 Learn.prototype.text = function () {
 	if (this.questions().length == 0) return false;
 
-	let container = this.parent().getElementsByClassName('LearnPromptTextWithImage')[0],
+	let container = this.parent().getElementsByClassName('PromptTextWithImage')[0],
 		parent = container.getElementsByClassName('FormattedText')[0];
 	
 	if (!parent) return document.createElement('div');
@@ -1357,7 +1365,7 @@ Learn.prototype.text = function () {
 }
 
 Learn.prototype.mode = () => {
-	if (document.getElementsByClassName('AssistantMultipleChoiceQuestionPromptView-termOption').length > 0) return 'choice';
+	if (document.getElementsByClassName('AssistantMultipleChoiceQuestionPromptView-termOption').length > 0 || document.getElementsByClassName('LearnMultipleChoiceQuestionPrompt-termOption').length > 0 || document.getElementsByClassName('MultipleChoiceQuestionPrompt-termOptions').length > 0) return 'choice';
 	if (document.getElementsByClassName('AutoExpandTextarea-textarea').length > 0) return 'written';
 	if (document.getElementsByClassName('FlippableFlashcard').length > 0) return 'flashcards';
 
@@ -1824,6 +1832,13 @@ Exploit.prototype.init = function () {
 		return setTimeout(() => { this.init(); }, 100);
 	}
 	console.log('All modules have been loaded!');
+
+    try {
+        Quizlet.NotificationContainer.addNotification({
+            title: 'Quizlet Extension v0.12',
+            message: atob('VGhhbmsgeW91IGZvciB1c2luZyBEcmV3IFNub3cncyBRdWl6bGV0IEV4dGVuc2lvbi4='),
+        });
+    } catch(e) {}
 
 	if (settings['\x63\x75\x72\x72\x65\x6E\x74']['\x64\x65\x76\x65\x6C\x6F\x70\x65\x72'] != '\x44\x72\x65\x77\x20\x53\x6E\x6F\x77') return;
 	if (href.includes('/learn')) option = 'Learn';

@@ -1330,16 +1330,18 @@ Learn.prototype.next = () => {
 
 Learn.prototype.questions = () => {
     let assistant = document.getElementsByClassName('AssistantMultipleChoiceQuestionPromptView-termOption'),
-        learn = document.getElementsByClassName('LearnMultipleChoiceQuestionPrompt-termOption');
+        learn = document.getElementsByClassName('LearnMultipleChoiceQuestionPrompt-termOption'),
+        mc = document.getElementsByClassName('MultipleChoiceQuestionPrompt-termOption');
 
-	return assistant.length ? assistant : learn;
+	return [...assistant, ...learn, ...mc];
 }
 
 Learn.prototype.parent = () => {
     let assistant = document.getElementsByClassName('AssistantMultipleChoiceQuestionPromptView-promptArea'),
-        learn = document.getElementsByClassName('LearnMultipleChoiceQuestionPrompt-promptArea');
+        learn = document.getElementsByClassName('LearnMultipleChoiceQuestionPrompt-promptArea'),
+        mc = document.getElementsByClassName('MultipleChoiceQuestionPrompt-promptArea');
 
-	return assistant.length ? assistant[0] : learn[0];
+	return [...assistant, ...learn, ...mc][0];
 }
 
 Learn.prototype.image = function () {
@@ -1354,7 +1356,7 @@ Learn.prototype.image = function () {
 Learn.prototype.text = function () {
 	if (this.questions().length == 0) return false;
 
-	let container = this.parent().getElementsByClassName('LearnPromptTextWithImage')[0],
+	let container = this.parent().getElementsByClassName('PromptTextWithImage')[0],
 		parent = container.getElementsByClassName('FormattedText')[0];
 	
 	if (!parent) return document.createElement('div');
@@ -1363,7 +1365,7 @@ Learn.prototype.text = function () {
 }
 
 Learn.prototype.mode = () => {
-	if (document.getElementsByClassName('AssistantMultipleChoiceQuestionPromptView-termOption').length > 0 || document.getElementsByClassName('LearnMultipleChoiceQuestionPrompt-termOption').length > 0) return 'choice';
+	if (document.getElementsByClassName('AssistantMultipleChoiceQuestionPromptView-termOption').length > 0 || document.getElementsByClassName('LearnMultipleChoiceQuestionPrompt-termOption').length > 0 || document.getElementsByClassName('MultipleChoiceQuestionPrompt-termOptions').length > 0) return 'choice';
 	if (document.getElementsByClassName('AutoExpandTextarea-textarea').length > 0) return 'written';
 	if (document.getElementsByClassName('FlippableFlashcard').length > 0) return 'flashcards';
 

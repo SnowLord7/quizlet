@@ -1165,7 +1165,7 @@ Live.prototype.paste = function (e) {
 }
 
 Live.prototype.interval = function () {
-    if (!this.paused && this.data && Object.keys(this.data).length > 0 && window.location.href.indexOf('quizlet') > 0 && window.location.href.indexOf('live') > 0) {
+    if (this.data && Object.keys(this.data).length > 0 && window.location.href.indexOf('quizlet') > 0 && window.location.href.indexOf('live') > 0) {
         if (document.getElementById('liveAnswerPhrase') && document.getElementsByClassName('StudentPrompt-inner')[0] && document.getElementsByClassName('StudentTerm is-clickable can-beClicked').length) {
             let question = document.getElementsByClassName('StudentPrompt-inner')[0].innerText.toLowerCase().trim(),
                 options = document.getElementsByClassName('StudentTerm is-clickable can-beClicked');
@@ -1177,11 +1177,13 @@ Live.prototype.interval = function () {
                 if (data.word.toLowerCase() == question) document.getElementById('liveAnswerPhrase').textContent = word.definition;
                 else document.getElementById('liveAnswerPhrase').textContent = data.word;
 
-                for (let i = 0; i < options.length; i++) {
-                    let option = options[i].innerText.toLowerCase().trim();
-                    if (data.definition.toLowerCase() == option) this.click(options[i]);
-                    else if (data.word.toLowerCase() == option) this.click(options[i]);
-                }
+                if (!this.paused) {
+                    for (let i = 0; i < options.length; i++) {
+                        let option = options[i].innerText.toLowerCase().trim();
+                        if (data.definition.toLowerCase() == option) this.click(options[i]);
+                        else if (data.word.toLowerCase() == option) this.click(options[i]);
+                    }
+                }                
             });
         }
     }

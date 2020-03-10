@@ -206,6 +206,64 @@
 			return closestObj;
 		},
 
+        /**
+		 * Spoof input event on given element
+		 * @param {HTMLElement} elem - Element to dispatch the event onto
+		 * @param {String} data - Data to be fed into the event
+		 * @memberof Modules
+		 */
+		'input': function (elem, data='') {
+			let event = new InputEvent('input', {
+				bubbles: true,
+				cancelBubble: false,
+				cancelable: false,
+				composed: true,
+				currentTarget: null,
+				dataTransfer: null,
+				defaultPrevented: false,
+				detail: 0,
+				view: null,
+				which: 0,
+				returnValue: true,
+				sourceCapabilities: null,
+				eventPhase: 0,
+				isComposing: false,
+				inputType: 'insertText',
+				srcElement: elem,
+				target: elem,
+				data
+			});
+			elem.dispatchEvent(event);
+		},
+        
+        /**
+		 * Spoof focus event on given element
+		 * @param {HTMLElement} elem - Element to dispatch the event onto
+		 * @memberof Modules
+		 */
+		'focus': function (elem) {
+			elem.focus();
+			let event = new FocusEvent('focus', {
+				bubbles: false,
+				cancelBubble: false,
+				cancelable: false,
+				composed: true,
+				currentTarget: null,
+				defaultPrevented: false,
+				detail: 0,
+				eventPhase: 0,
+				isTrusted: true,
+				relatedTarget: null,
+				returnValue: true,
+				sourceCapabilities: null,
+				srcElement: elem,
+				target: elem,
+				view: window,
+				which: 0
+			});
+			elem.dispatchEvent(event);
+		},
+
 		/**
 		 * Download a file with given name and contents
 		 * @param {String} filename - Name of the file to download
@@ -1470,9 +1528,19 @@ Micromatch.prototype.redirect = () => {
 function Spell() {
 	this.hijack();
 	this.play();
+
+    this.cooldown = 10;
+    this.last_called = Date.now();
+
+    try {
+        document.getElementsByClassName('UIIcon--audio')[0].parentElement.click()
+    } catch(e) {}
 }
 
 Spell.prototype.play = function () {
+    let elem1 = document.getElementById('js-spellReplayAudio'),
+        elem2 = document.getElementsByClassName('SpellQuestionView-replayAudio')[0];
+
 	let event = new KeyboardEvent('keydown', {
 		bubbles: true,
 		cancelable: true,
@@ -1482,11 +1550,15 @@ Spell.prototype.play = function () {
 		keyCode: 27,
 		which: 27
 	});
-	document.getElementById('js-spellReplayAudio').dispatchEvent(event);
+	(elem2 || elem1).dispatchEvent(event);
 }
 
 Spell.prototype.input = () => {
-	return document.getElementById('js-spellInput');
+    let elem1 = document.getElementById('js-spellInput'),
+        elem2 = document.getElementsByClassName('AutoExpandTextarea-textarea')[0],
+        elem3 = document.querySelector('textarea');
+
+	return elem2 || elem1 || elem3;
 }
 
 Spell.prototype.alert = function () {
@@ -1518,16 +1590,30 @@ Spell.prototype.enter = function () {
 
 Spell.prototype.solve = function (e) {
 	e.oldPlay();
-	
+
+    let now = Date.now();
+	if (now - this.last_called <= this.cooldown) return false;
+    this.last_called = now;
+
 	let terms = Answers.get(),
 		answer = e._src,
 		input = this.input();
 	
 	for (let i = 0; i < terms.length; ++i) {
-		let src = terms[i].word_audio;
+		let src = terms[i]._wordAudioUrl;
 		if (src == answer) {
-			input.value = terms[i].word;
-			this.enter();
+            let word = terms[i].word;
+
+            let event = window.document.createEvent('Event');
+            event.initEvent('input', true, true);
+
+            let inp = input,
+                data = Object.getOwnPropertyDescriptor(inp.constructor.prototype, 'value');
+           
+            (null == data ? void 0 : data.set) ? data.set.call(inp, word) : inp.value = word;            
+            input.dispatchEvent(event);
+
+			//setTimeout(() => { this.enter(); }, 100);
 			break;
 		}
 	}

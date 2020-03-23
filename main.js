@@ -390,83 +390,7 @@ function getExtensionSettings() {
         }
 
         function spell() {
-            if (getClass('SpellModeControls-progressValue')[0].innerHTML == '100%') return 1;
-
-            const submit = () => {
-                const input = getId("js-spellInput");
-                if (input) {
-                    input.focus();
-                    const keyEvent = new KeyboardEvent("keydown", {
-                        bubbles: true,
-                        cancelable: true,
-                        char: "Enter",
-                        key: "Enter",
-                        shiftKey: false,
-                        keyCode: 13,
-                        which: 13
-                    });
-                    input.dispatchEvent(keyEvent);
-                }
-            }
-
-            const findAnswer = (question, terms) => {
-                let answer = undefined;
-
-                answer = terms.filter((t) => t.definition.replace(/\n/g, '').trim() == question.trim()).getRandom();
-
-                if (!answer && question.contains('_')) {
-                    answer = terms.filter((t) => {
-                        var blank = t.definition,
-                            newWord = question,
-                            underscores = question.split('_').length - 1;
-
-                        for (let i = 0; i < underscores; i++) {
-                            let index = newWord.indexOf('_');
-                            newWord = newWord.slice(0, index) + newWord.slice(index + 1, Infinity);
-                            blank = blank.slice(0, index) + blank.slice(index + 1, Infinity);
-                        }
-                        return blank == newWord;
-                    }).getRandom();
-                }
-
-                if (!answer) answer = terms.filter((t) => t.word == question).getRandom();
-                return answer;
-            }
-
-            try {
-                if (!getId("js-spellInput").readOnly) {
-                    let terms = window.Quizlet.spellModeData.spellGameData.termsById,
-                        question = getId('js-spellPrompt').textContent,
-                        definition = findAnswer(question, terms).definition,
-                        answer = findAnswer(question, terms);
-
-                    if (question.contains('_')) {
-                        var indices = [];
-                        for (let i = 0; i < question.length; i++) {
-                            if (question[i] === '_') indices.push(definition[i]);
-                        }
-                        getId("js-spellInput").value = indices.join('');
-                    }
-
-                    if (answer.word == getId("js-spellPrompt").innerText) {
-                        getId("js-spellInput").value = answer.definition;
-                    } else {
-                        getId("js-spellInput").value = answer.word;
-                    }
-
-                    if (question == '') {
-                        let src = document.getElementById('js-spellPrompt').querySelector('img').src,
-                            img = src.split('/').slice(-1)[0].slice(1, -6),
-                            ans = Quizlet.spellModeData.spellGameData.termsById.filter((e) => e.photo.contains(img)).getRandom();
-
-                        getId("js-spellInput").value = ans.word;
-                    }
-                    submit();
-                    setTimeout(spell, 10);
-                } else { throw 1 }
-            } catch (e) {
-                setTimeout(spell, 100);
-            }
+            new Spell();
         }
 
         function match() {
@@ -910,4 +834,98 @@ Learn.prototype.mode = () => {
 	if (document.getElementsByClassName('FlippableFlashcard').length > 0) return 'flashcards';
 
 	return 'other';
+}
+
+function Spell() {
+	this.hijack();
+	this.play();
+
+    this.cooldown = 10;
+    this.last_called = Date.now();
+
+    try {
+        document.getElementsByClassName('UIIcon--audio')[0].parentElement.click()
+    } catch(e) {}
+}
+
+Spell.prototype.play = function () {
+    let elem1 = document.getElementById('js-spellReplayAudio'),
+        elem2 = document.getElementsByClassName('SpellQuestionView-replayAudio')[0];
+
+	let event = new KeyboardEvent('keydown', {
+		bubbles: true,
+		cancelable: true,
+		char: 'Escape',
+		key: 'Escape',
+		shiftKey: false,
+		keyCode: 27,
+		which: 27
+	});
+	(elem2 || elem1).dispatchEvent(event);
+}
+
+Spell.prototype.input = () => {
+    let elem1 = document.getElementById('js-spellInput'),
+        elem2 = document.getElementsByClassName('AutoExpandTextarea-textarea')[0],
+        elem3 = document.querySelector('textarea');
+
+	return elem2 || elem1 || elem3;
+}
+
+Spell.prototype.alert = function () {
+	Alert(
+		'SnowLord\'s Quizlet Extension',
+		`<h2>Game Mode: Spell</h2>Thank you for using SnowLord7's Quizlet Exploit<br>Without you, this exploit wouldn't be possible.<br><h4>Instructions:</h4>Just wait for this script to finish!<br><br><button class="UIButton" type="button"><span class="UIButton-wrapper"><span>Inject</span></span></button>`
+	);
+}
+
+Spell.prototype.hijack = function () {
+	let self = this;
+
+	Howl.prototype.oldPlay = Howl.prototype.play;
+	Howl.prototype.play = function () { self.solve(this); }
+}
+
+Spell.prototype.enter = function () {
+	let event = new KeyboardEvent('keydown', {
+		bubbles: true,
+		cancelable: true,
+		char: 'Enter',
+		key: 'Enter',
+		shiftKey: false,
+		keyCode: 13,
+		which: 13
+	});
+	this.input().dispatchEvent(event);
+}
+
+Spell.prototype.solve = function (e) {
+	e.oldPlay();
+
+    let now = Date.now();
+	if (now - this.last_called <= this.cooldown) return false;
+    this.last_called = now;
+
+	let terms = Answers.get(),
+		answer = e._src,
+		input = this.input();
+	
+	for (let i = 0; i < terms.length; ++i) {
+		let src = terms[i]._wordAudioUrl;
+		if (src == answer) {
+            let word = terms[i].word;
+
+            let event = window.document.createEvent('Event');
+            event.initEvent('input', true, true);
+
+            let inp = input,
+                data = Object.getOwnPropertyDescriptor(inp.constructor.prototype, 'value');
+           
+            (null == data ? void 0 : data.set) ? data.set.call(inp, word) : inp.value = word;            
+            input.dispatchEvent(event);
+
+			//setTimeout(() => { this.enter(); }, 100);
+			break;
+		}
+	}
 }

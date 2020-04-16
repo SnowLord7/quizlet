@@ -1596,11 +1596,11 @@ Spell.prototype.solve = function (e) {
     this.last_called = now;
 
 	let terms = Answers.get(),
-		answer = e._src,
+		answer = new URLSearchParams(e._src).get('b'),
 		input = this.input();
 	
 	for (let i = 0; i < terms.length; ++i) {
-		let src = terms[i]._wordAudioUrl;
+		let src = new URLSearchParams(terms[i]._wordAudioUrl).get('b');
 		if (src == answer) {
             let word = terms[i].word;
 

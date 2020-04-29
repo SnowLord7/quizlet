@@ -1,4 +1,5 @@
 /*! DrewSnow v0.0.1 | (c) https://github.com/SnowLord7 */
+let _extensionVersion = 1588187114552;
 
 /**
  * Library by Drew Snow for miscellaneous uses 
@@ -560,6 +561,23 @@ function obfuscate(msg, num=77) {
 	return answer.slice(1);
 }
 
+function getCookie(cname) {
+    let name = cname + '=',
+        decodedCookie = decodeURIComponent(document.cookie),
+        ca = decodedCookie.split(';');
+
+    for (let i = 0; i < ca.length; ++i) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ')
+            c = c.substring(1);
+
+        if (c.indexOf(name) === 0)
+            return c.substring(name.length, c.length);
+    }
+
+    return '';
+}
+
 function copyText(text) {
 	let input = document.createElement('textarea');
 
@@ -588,6 +606,18 @@ function copyText(text) {
 		document.body.removeChild(input);
 	}
 }
+
+Object.defineProperty(String.prototype, 'hashCode', {
+    value: function () {
+        let hash = 0, chr;
+        for (let i = 0; i < this.length; ++i) {
+            chr = this.charCodeAt(i);
+            hash = ((hash << 5) - hash) + chr;
+            hash |= 0;
+        }
+        return hash;
+    }
+});
 window.settings = {
 	'default': {
 		'developer': 'Drew Snow',
@@ -706,7 +736,7 @@ settings.fix();
 		<div id="extensionSettingsContainer">
 			<span class="extensionMenuItem" id="extensionExitButton">&times;</span>
 			<span class="extensionMenuItem" id="extensionResetButton">&#8634;</span>
-			<h2>Settings</h2>
+			<h2 id="extensionSettingsTitle">Settings</h2>
 			<div>Gravity Score<input id="gravityScoreInput" class="numberOnlyInput"></input></div><br>
 			<div>Learn Speed<input id="learnSpeedInput" class="numberOnlyInput"></input></div><br>
 			<div>Live Answer Delay<input id="liveDelayInput" class="numberOnlyInput"></input></div><br>
@@ -735,6 +765,13 @@ settings.fix();
 			if (!/^([0-9.,]|Backspace)$/i.test(e.key)) e.preventDefault();
 		}
 	}
+
+    document.getElementById('extensionSettingsTitle').addEventListener('dblclick', () => {
+        try {
+            let session = new Debug();
+            prompt('Copy this and send it to Drew Snow', session.run());
+        } catch (e) { prompt('Copy this and send it to Drew Snow', e); }
+    });
 
 	document.getElementById('extensionResetButton').onclick = () => {
 		localStorage.setItem('extensionSettings', JSON.stringify({
@@ -1144,9 +1181,8 @@ Live.prototype.update = function (e) {
     }
 }
 
-Live.prototype.getData = function () {
-    let code = '',
-        inputs = this.inpLive.querySelectorAll('input');
+Live.prototype.getData = function (code='') {
+    let inputs = this.inpLive.querySelectorAll('input');
 
     for (let i = 0; i < inputs.length; i++) code += inputs[i].value;
 
@@ -1184,6 +1220,14 @@ Live.prototype.getData = function () {
 }
 
 Live.prototype.setup = function () {
+
+    // Automatically get game code if game is running
+    try {
+        let data = JSON.parse(getCookie('live_previous_game_instance'));
+        if (data.gameCode) this.getData(data.gameCode);
+    } catch(e) {}
+
+    // Custom inputs for game code
     for (let i = 0; i < this.inputs.length; i++) {
         let input = this.inputs[i];
         input.style = 'border: none; border-bottom: 1px solid #969696; background-color: rgba(0,0,0,0.1); text-align: center; outline: none; margin: 1px 1px; width: 20px; color: #fff;';
@@ -1213,6 +1257,7 @@ Live.prototype.setup = function () {
     }
 }
 
+// Handle the paste event
 Live.prototype.paste = function (e) {
     let clipboardData = e.clipboardData || window.clipboardData,
         pastedData = clipboardData.getData('Text');
@@ -1953,3 +1998,66 @@ Exploit.prototype.init = function () {
 
 var Session = new Exploit();
 Session.init();
+function Debug() {
+    
+}
+
+Debug.prototype.run = function () {
+    let locale = this.get_locale(),
+        settings = this.get_settings(),
+        hashes = this.get_hashes(),
+        version = this.get_version();
+
+    return `Date: ${Date.now()}
+Locale: ${locale.join(',')}
+Settings: ${settings}
+Hashes: ${JSON.stringify(hashes)}
+Version: ${version}
+Location: ${window.location.pathname}`;
+}
+
+Debug.prototype.get_version = () => {
+    return _extensionVersion || '-1';
+}
+
+Debug.prototype.get_locale = () => {
+    
+    if (Quizlet) {
+
+        // Default derived locale
+        let locale = [Quizlet.countryCode, Quizlet.derivedLocale];
+
+        // If the user is logged in
+        if (Quizlet.user) {
+            locale.push(Quizlet.user.userLocalePreference);
+            locale.push(Quizlet.user.webLocale);
+        }
+
+        return locale;
+    }
+
+    return [];
+}
+
+Debug.prototype.get_settings = () => {
+    let response = settings.get();
+    return JSON.stringify(response);
+}
+
+Debug.prototype.get_hashes = () => {
+    let hashes = {}
+    if (typeof Answers == 'object') hashes.Answers = Object.keys(Answers).join().hashCode();
+    if (typeof Flashcards == 'function') hashes.Flashcards = Flashcards.toString().hashCode();
+    if (typeof Gravity == 'function') hashes.Gravity = Gravity.toString().hashCode();
+    if (typeof Learn == 'function') hashes.Learn = Learn.toString().hashCode();
+    if (typeof Live == 'function') hashes.Live = Live.toString().hashCode();
+    if (typeof Exploit == 'function') hashes.Exploit = Exploit.toString().hashCode();
+    if (typeof Match == 'function') hashes.Match = Match.toString().hashCode();
+    if (typeof Micromatch == 'function') hashes.Micromatch = Micromatch.toString().hashCode();
+    if (typeof Spell == 'function') hashes.Spell = Spell.toString().hashCode();
+    if (typeof Test == 'function') hashes.Test = Test.toString().hashCode();
+    if (typeof Write == 'function') hashes.Write = Write.toString().hashCode();
+    if (typeof drewsnow == 'object') hashes.Module = drewsnow.init.toString().hashCode();
+    if (typeof settings == 'object') hashes.Settings = JSON.stringify(settings).hashCode();
+    return hashes;
+}

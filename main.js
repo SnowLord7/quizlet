@@ -350,43 +350,48 @@ function getExtensionSettings() {
         }
 
         function write() {
-            var remaining = parseInt(document.getElementsByClassName("LearnModeProgressBar-value")[0].innerHTML);
-            for (var i = 0; i < remaining; i++) {
-                getId("user-answer").value = Math.random();
-                getId("js-learnModeAnswerButton").click();
-                getClass("js-learnModeOverrideIncorrect")[0].click();
-            }
-			/*
-			var buttons = document.querySelectorAll("button"),
-				 span = document.querySelectorAll("span");
+            let element = document.getElementsByClassName('WriteProgress-value')[0];
 
-			if (getId("user-answer")) {
-				getId("user-answer").disabled = true;
-				getId("user-answer").value = findAnswerGlobal(getClass("qDef lang-en TermText")[0].innerHTML);
-				for (var i = 0; i < buttons.length; i++) {
-					if (buttons[i].childNodes[0].innerHTML == "Answer") {
-						buttons[i].click();
-					}
-				}
-			try {
-				for (var i = 0; i < span.length; i++) {
-					if (span[i].childNodes[0].childNodes[0].innerHTML == "Override: I was right") {
-						span[i].click;
-					}
-				}
-			} catch (e) {}
-				write();
-			} else {
-				for (var i = 0; i < buttons.length; i++) {
-					if (buttons[i].innerHTML == "Press any key to continue") {
-						buttons[i].click();
-					} else if (buttons[i].innerHTML == "Start Over") {
-						return 1;
-					}
-				}
-				setTimeout(write, 0);
+	    let index = 0,
+		phrases = 'Hello my friend you are you today? I am extremely sad because Quizlet finds enjoyment at my pain, not to mention they are being paid to make me sad while all I gain is depression.'.split(' ');
+
+		if (element) {
+			let remaining = Number(element.innerText) || 0;
+
+			for (let i = 0; i < remaining; i++) {
+				setTimeout(() => {
+
+			let index = 0,
+			    phrases = 'Hello my friend you are you today? I am extremely sad because Quizlet finds enjoyment at my pain, not to mention they are being paid to make me sad while all I gain is depression.'.split(' ');
+
+			let ta = document.querySelector('textarea'),
+			    value = ' ' + phrases[index];
+
+			if (!ta) return;
+
+			index++;
+			if (index > phrases.length) index = 0;
+
+			ta.focus();
+
+			let val = Object.getOwnPropertyDescriptor(ta.constructor.prototype, 'value');
+			(null == val ? void 0 : val.set) ? val.set.call(ta, value) : ta.value = value;
+
+			let evt = window.document.createEvent('Event');
+			evt.initEvent('input', true, true);
+			ta.dispatchEvent(evt);
+
+			ta.selectionStart = ta.value.length + 1;
+			ta.selectionEnd = ta.value.length + 1;
+
+			document.querySelector('button[type="submit"]').click();
+			document.getElementsByClassName('IncorrectWrittenFeedbackItem-mistyped')[0].querySelector('button').click();
+
+		    }, i * 100);
 			}
-			*/
+		} else {
+		alert('Error: Please message the developer that Quizlet has updated.');
+	    }
         }
 
         function spell() {

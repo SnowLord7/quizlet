@@ -1,5 +1,5 @@
 /*! DrewSnow v0.0.1 | (c) https://github.com/SnowLord7 */
-let _extensionVersion = 1590247310141;
+let _extensionVersion = 1590784983652;
 
 /**
  * Library by Drew Snow for miscellaneous uses 
@@ -1197,7 +1197,7 @@ Live.prototype.getData = function (code='') {
                     fetch(`https://quizlet.com/${id}/flashcards`)
                         .then(e => e.text())
                         .then(html => {
-                            let matches = html.match(/window\.Quizlet\["cardsModeData"\] = (.+?); QLoad\("Quizlet\.cardsModeData"\);/);
+                            let matches = html.match(/window\.Quizlet\["assistantModeData"\]\s*=\s*(.+?);\s*QLoad\(\"Quizlet\.assistantModeData\"\)/);
                             try {
                                 this.input.value = matches[1];
                                 this.data = JSON.parse(matches[1]);
